@@ -9,4 +9,9 @@ export const authAdmin = (payload) => httpClient.post("admin/auth", payload);
 export const fetchAllTests = () => httpClient.get("/test/fetchAllTests", {});
 export const fetchTestDetails = (payload) => httpClient.post("/test/fetchTest", payload);
 export const createTest = (payload) => httpClient.post("/test/add", payload);
+export const updateTest = (payload) => httpClient.post("/test/update", payload);
 export const deleteTest = (payload) => httpClient.post("/test/delete", payload);
+
+// Question
+export const addQuestion = (payload) => httpClient.post("/question/add", payload);
+export const updateQuestion = (payload) => httpClient.post("/question/update", payload);
