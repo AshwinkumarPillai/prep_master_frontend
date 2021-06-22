@@ -3,3 +3,12 @@
   justify-content: center;
   align-items: center;
 }
+
+.testCard {
+  transition: 0.2s;
+  transform: scale(0.9);
+}
+
+.testCard:hover {
+  transform: scale(1);
+}

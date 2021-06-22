@@ -11,6 +11,8 @@ import Login from "./pages/login";
 import AdminTest from "./pages/admin/admin_test";
 import Navbar from "./components/navbar";
 import PageNotFound from "./pages/PageNotFound";
+import Home from "./pages/home";
+import Test from "./pages/test";
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
       <Navbar></Navbar>
       <BrowserRouter>
         <Switch>
+          <Route exact path="/" component={Home}></Route>
+          <PrivateRoute exact path="/test/:id" component={Test}></PrivateRoute>
           <AdminPageRoute exact path="/admin" component={Admin}></AdminPageRoute>
           <LoggedInCheck exact path="/admin/login" component={AdminLogin}></LoggedInCheck>
           <AdminTestRoute exact path="/admin/test_edit" component={AdminTest}></AdminTestRoute>
