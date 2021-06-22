@@ -36,6 +36,15 @@ class admin_test extends Component {
     this.setState({ test: { ...this.state.test, questions: [...this.state.test.questions, question] } });
   };
 
+  removeQuestion = (id) => {
+    let test = { ...this.state.test };
+    let questions = [...test.questions];
+    let index = questions.findIndex((q) => q._id === id);
+    if (index !== -1) questions.splice(index, 1);
+    test.questions = questions;
+    this.setState({ test });
+  };
+
   saveTest = async () => {
     let test = JSON.parse(JSON.stringify(this.state.test));
     let checkpoint = JSON.parse(JSON.stringify(this.state.test));
@@ -90,21 +99,7 @@ class admin_test extends Component {
             <div className="container">
               <React.Fragment>
                 {this.state.test.questions.map((question, index) => (
-                  <QuestionEdit question={question} key={index} />
-                  // <React.Fragment key={index}>
-                  //   <div className="card">
-                  //     {index + 1}&nbsp;&nbsp;&nbsp;{question.title}
-                  //     <hr />
-                  //     {question.options.map((option, index2) => (
-                  //       <React.Fragment key={index2}>
-                  //         <div className="row">
-                  //           <div className="col s2">{index2 + 1}</div>
-                  //           <div className="col s10">{option.value}</div>
-                  //         </div>
-                  //       </React.Fragment>
-                  //     ))}
-                  //   </div>
-                  // </React.Fragment>
+                  <QuestionEdit question={question} key={index} removeQuestion={this.removeQuestion} />
                 ))}
               </React.Fragment>
               <br />
@@ -119,12 +114,12 @@ class admin_test extends Component {
                         this.setState({ addingQuestion: true });
                       }}
                     >
-                      <i className="material-icons left">add_circle_outline</i>Add Question
+                      <i className="material-icons left">add</i>Add Question
                     </button>
                   </div>
                   <div className="col">
                     {this.state.test.questions.length > 0 ? (
-                      <button className="waves-effect btn green darken-2" onClick={this.saveTest}>
+                      <button className="waves-effect btn green light-2" onClick={this.saveTest}>
                         <i className="material-icons left">publish</i>Save Test
                       </button>
                     ) : null}

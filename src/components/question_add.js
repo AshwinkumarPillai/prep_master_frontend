@@ -207,7 +207,7 @@ class QuestionAdd extends Component {
                   <div className="row">
                     <div className="col">
                       <button className="waves-effect btn blue darken-2" onClick={this.addOption}>
-                        <i className="material-icons left">add_circle_outline</i>Add Option
+                        <i className="material-icons left">add_circle</i>Add Option
                       </button>
                     </div>
                     <div className="col">

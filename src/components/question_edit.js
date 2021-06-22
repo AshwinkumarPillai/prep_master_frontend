@@ -206,7 +206,7 @@ export default class question_edit extends Component {
                   <div className="row">
                     <div className="col">
                       <button className="waves-effect btn blue darken-2" onClick={this.addOption}>
-                        <i className="material-icons left">add_circle_outline</i>Add Option
+                        <i className="material-icons left">add_circle</i>Add Option
                       </button>
                     </div>
                     <div className="col">
@@ -214,11 +214,11 @@ export default class question_edit extends Component {
                         <i className="material-icons left">check</i>Update Question
                       </button>
                     </div>
-                    {/* <div className="col">
-                      <button className="waves-effect btn red accent-4" onClick={this.props.cancelAddQuestion}>
-                        <i className="material-icons left">clear</i>Cancel
+                    <div className="col">
+                      <button className="waves-effect btn red accent-4" onClick={() => this.props.removeQuestion(this.state._id)}>
+                        <i className="material-icons left">delete</i>Remove Question
                       </button>
-                    </div> */}
+                    </div>
                   </div>
                 </React.Fragment>
               </React.Fragment>
