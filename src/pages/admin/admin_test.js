@@ -3,7 +3,7 @@ import { withRouter } from "react-router-dom";
 import QuestionEdit from "../../components/question_edit";
 import QuestionAdd from "../../components/question_add";
 
-import { updateTest } from "../../api/auth";
+import { updateTest, fetchTestDetails } from "../../api/auth";
 
 class admin_test extends Component {
   constructor(props) {
@@ -15,8 +15,20 @@ class admin_test extends Component {
   }
 
   componentDidMount() {
+    this.fetchTest();
+  }
+
+  async fetchTest() {
     let test = JSON.parse(localStorage.getItem("adminTest"));
-    this.setState({ test });
+    try {
+      let res = await fetchTestDetails({ testId: test._id });
+      let resp = res.data;
+      if (resp.status === 200) {
+        this.setState({ test: resp.test });
+      }
+    } catch (error) {
+      alert("Internal Server Error");
+    }
   }
 
   componentWillUnmount() {
