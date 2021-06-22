@@ -154,7 +154,7 @@ class admin extends Component {
                     this.state.tests.map((test, key) => {
                       return (
                         <div className="col s12 m4" key={key}>
-                          <div className="card purple darken-4">
+                          <div className="card purple darken-3">
                             <div className="card-content white-text">
                               <span className="card-title">{test.name}</span>
                               <p>Number of questions : {test.questions.length}</p>

@@ -118,35 +118,54 @@ class admin_test extends Component {
               {this.state.addingQuestion ? (
                 <QuestionAdd cancelAddQuestion={this.cancelAddQuestion} saveQuestion={this.saveQuestion} />
               ) : (
-                <div className="row">
-                  <div className="col">
-                    <button
-                      className="waves-effect btn blue darken-2"
-                      onClick={() => {
-                        this.setState({ addingQuestion: true });
-                      }}
-                    >
-                      <i className="material-icons left">add</i>Add Question
-                    </button>
+                <React.Fragment>
+                  <div className="row">
+                    <div className="col s12">
+                      <nav>
+                        <div className="nav-wrapper purple darken-4">
+                          <form>
+                            <div className="input-field">
+                              <input id="search" type="search" required />
+                              <label className="label-icon" htmlFor="search">
+                                <i className="material-icons">search</i>
+                              </label>
+                              <i className="material-icons">close</i>
+                            </div>
+                          </form>
+                        </div>
+                      </nav>
+                    </div>
                   </div>
-                  <div className="col">
-                    {this.state.test.questions.length > 0 ? (
-                      <button className="waves-effect btn green light-2" onClick={this.saveTest}>
-                        <i className="material-icons left">publish</i>Save Test
+                  <div className="row">
+                    <div className="col">
+                      <button
+                        className="waves-effect btn blue darken-2"
+                        onClick={() => {
+                          this.setState({ addingQuestion: true });
+                        }}
+                      >
+                        <i className="material-icons left">add</i>Add Question
                       </button>
-                    ) : null}
+                    </div>
+                    <div className="col">
+                      {this.state.test.questions.length > 0 ? (
+                        <button className="waves-effect btn green light-2" onClick={this.saveTest}>
+                          <i className="material-icons left">publish</i>Save Test
+                        </button>
+                      ) : null}
+                    </div>
+                    <div className="col">
+                      <button
+                        className="waves-effect btn purple darken-4"
+                        onClick={() => {
+                          this.props.history.push("/admin");
+                        }}
+                      >
+                        <i className="material-icons left">check</i>Done
+                      </button>
+                    </div>
                   </div>
-                  <div className="col">
-                    <button
-                      className="waves-effect btn purple darken-4"
-                      onClick={() => {
-                        this.props.history.push("/admin");
-                      }}
-                    >
-                      <i className="material-icons left">check</i>Done
-                    </button>
-                  </div>
-                </div>
+                </React.Fragment>
               )}
             </div>
             <br />
@@ -154,10 +173,8 @@ class admin_test extends Component {
           </React.Fragment>
         ) : (
           <div
+            className="flex_center"
             style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
               height: "100vh",
               textAlign: "center",
               fontSize: "20px",

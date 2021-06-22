@@ -3,7 +3,7 @@ import { withRouter } from "react-router-dom";
 
 class login extends Component {
   render() {
-    return <div></div>;
+    return <div>hello</div>;
   }
 }
 

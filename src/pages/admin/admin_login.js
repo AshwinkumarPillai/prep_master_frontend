@@ -25,8 +25,9 @@ class admin_login extends Component {
       if (resp.status === 200) {
         let user = resp.user;
         localStorage.setItem("token", user.token);
-        localStorage.setItem("user", user);
+        localStorage.setItem("user", JSON.stringify(user));
         this.props.history.push("/admin");
+        window.location.reload();
       }
     } catch (error) {
       this.setState({ logginIn: false });
