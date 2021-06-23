@@ -15,3 +15,4 @@ export const deleteTest = (payload) => httpClient.post("/test/delete", payload);
 // Question
 export const addQuestion = (payload) => httpClient.post("/question/add", payload);
 export const updateQuestion = (payload) => httpClient.post("/question/update", payload);
+export const searchQuestion = (payload) => httpClient.get(`/question/search?q=${payload}`);

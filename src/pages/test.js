@@ -3,10 +3,12 @@ import { withRouter } from "react-router-dom";
 
 import { fetchTestDetails } from "../api/auth";
 
+import Timer from "../components/timer";
+
 class Test extends Component {
   constructor(props) {
     super(props);
-    this.state = { name: "", time_limit: -1, questions: [], loadedTest: false };
+    this.state = { name: "", time_limit: -1, questions: [], loadedTest: false, endTime: 0 };
   }
 
   componentDidMount() {
@@ -20,13 +22,20 @@ class Test extends Component {
       let res = await fetchTestDetails({ testId });
       let resp = res.data;
       if (resp.status === 200) {
-        this.setState({ ...resp.test, loadedTest: true });
+        let time_limit = resp.test.time_limit;
+        let dt = new Date();
+        if (time_limit > 0) {
+          dt = new Date();
+          dt.setMinutes(dt.getMinutes() + time_limit);
+        }
+        this.setState({ ...resp.test, loadedTest: true, endTime: dt.getTime() });
         return;
       }
       alert("Error! Please try again");
       this.props.history.push("/");
     } catch (error) {
       alert("Error! Please try again");
+      // console.log(error);
       this.props.history.push("/");
     }
   }
@@ -39,6 +48,8 @@ class Test extends Component {
             <h4 className="center" style={{ textTransform: "capitalize" }}>
               {this.state.name}
             </h4>
+            {this.state.time_limit !== -1 && <Timer endTime={this.state.endTime} />}
+
             <div className="container">
               {this.state.questions.map((question, index) => (
                 <React.Fragment key={index}>
@@ -97,7 +108,7 @@ class Test extends Component {
             <div className="container">
               <div className="row">
                 <button className="btn blue darken-2 waves-effect">
-                  Submit Test <i class="material-icons left">done_all</i>
+                  Submit Test <i className="material-icons left">done_all</i>
                 </button>
               </div>
             </div>

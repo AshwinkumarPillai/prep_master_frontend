@@ -3,7 +3,7 @@ import { withRouter } from "react-router-dom";
 import QuestionEdit from "../../components/question_edit";
 import QuestionAdd from "../../components/question_add";
 
-import { updateTest, fetchTestDetails } from "../../api/auth";
+import { updateTest, fetchTestDetails, searchQuestion } from "../../api/auth";
 
 class admin_test extends Component {
   constructor(props) {
@@ -76,6 +76,13 @@ class admin_test extends Component {
     }
   };
 
+  searchQuestion = async (e) => {
+    let val = e.target.value;
+    if (val.length < 5) return;
+    let res = await searchQuestion(val);
+    console.log(res);
+  };
+
   render() {
     return (
       <React.Fragment>
@@ -125,7 +132,7 @@ class admin_test extends Component {
                         <div className="nav-wrapper purple darken-4">
                           <form>
                             <div className="input-field">
-                              <input id="search" type="search" required />
+                              <input id="search_question" type="search" onInput={this.searchQuestion} />
                               <label className="label-icon" htmlFor="search">
                                 <i className="material-icons">search</i>
                               </label>
