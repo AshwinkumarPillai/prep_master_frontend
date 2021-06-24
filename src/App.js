@@ -13,6 +13,7 @@ import Navbar from "./components/navbar";
 import PageNotFound from "./pages/PageNotFound";
 import Home from "./pages/home";
 import Test from "./pages/test";
+import Register from "./pages/register";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <LoggedInCheck exact path="/admin/login" component={AdminLogin}></LoggedInCheck>
           <AdminTestRoute exact path="/admin/test_edit" component={AdminTest}></AdminTestRoute>
           <Route exact path="/login" component={Login}></Route>
+          <Route exact path="/register" component={Register}></Route>
           <Route path="*" component={PageNotFound}></Route>
         </Switch>
       </BrowserRouter>

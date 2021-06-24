@@ -91,3 +91,12 @@
   background: #1e272e;
   display: inline-block;
 }
+
+.changeVisibilityLogin {
+  float: right;
+  position: absolute;
+  right: 10px;
+  top: 45%;
+  cursor: pointer;
+  z-index: 2;
+}

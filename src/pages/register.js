@@ -1,65 +1,61 @@
 import React, { Component } from "react";
-import { login } from "../api/auth";
+import { register } from "../api/auth";
 import { withRouter } from "react-router-dom";
 
-class Login extends Component {
+class Register extends Component {
   constructor(props) {
     super(props);
-    this.state = { username: "", pwd: "", logginIn: false };
+    this.state = { username: "", pwd: "", confirmpwd: "", debounce: false };
   }
 
   handleChange = (e) => {
     this.setState({ [e.target.name]: e.target.value });
   };
 
-  changeVisibility = (e) => {
-    let spanElement = e.target;
-    // console.dir(x);
-    const inputElement = document.querySelector("#password");
-    // console.dir(d.type);
-    if (spanElement.innerText === "visibility") {
-      spanElement.innerText = "visibility_off";
-      inputElement.type = "text";
-    } else {
-      spanElement.innerText = "visibility";
-      inputElement.type = "password";
-    }
-  };
-
-  loginUser = async () => {
-    this.setState({ logginIn: true });
+  registerUser = async () => {
     try {
-      let data = { username: this.state.username, pwd: this.state.pwd };
-      if (data.username.length === 0 || data.pwd.length === 0) {
-        alert("Please Enter Required Fields");
-        this.setState({ logginIn: false });
+      let username = this.state.username;
+      let pwd = this.state.pwd;
+      let confirmpwd = this.state.confirmpwd;
+      if (username.length < 5 || username.length > 15) {
+        alert("Username should be 5-15 characters long");
+        this.setState({ debounce: false });
         return;
       }
-      let res = await login(data);
+      if (pwd.length < 6 || pwd.length > 16) {
+        alert("Password should be 6-16 characters long");
+        this.setState({ debounce: false });
+        return;
+      }
+      if (pwd !== confirmpwd) {
+        alert("The passwords you entered does not match");
+        this.setState({ debounce: false });
+        return;
+      }
+      this.setState({ debounce: true });
+      let res = await register({ username, pwd });
       let resp = res.data;
       alert(resp.message);
-      this.setState({ logginIn: false });
       if (resp.status === 200) {
-        let user = resp.user;
-        localStorage.setItem("token", user.token);
-        localStorage.setItem("user", JSON.stringify(user));
-        this.props.history.push("/");
-        window.location.reload();
-        console.log("Successfully LoggedIn");
+        this.props.history.push("/login");
+        return;
       }
+      this.setState({ debounce: false });
     } catch (error) {
-      this.setState({ logginIn: false });
+      this.setState({ debounce: false });
       console.log(error);
     }
   };
+
   render() {
+    // return <div>hello</div>;
     return (
       <React.Fragment>
         <div className="row login_row">
           <div className="col s12 m8 l4 offset-m2 offset-l4">
             <div className="card">
-              <div className="card-action blue lighten-1 white-text center z-depth-3">
-                <h3>Login</h3>
+              <div className="card-action purple darken-3 white-text center z-depth-3">
+                <h3>Register</h3>
               </div>
               <div className="card-content">
                 <div className="form-field">
@@ -67,25 +63,21 @@ class Login extends Component {
                   <input type="text" id="username" name="username" onChange={this.handleChange} value={this.state.username} />
                 </div>
                 <br />
-                <div className="form-field" style={{ position: "relative" }}>
+                <div className="form-field">
                   <label htmlFor="password">Password</label>
+                  <input type="password" id="password" name="pwd" onChange={this.handleChange} value={this.state.pwd} />
+                  <label htmlFor="password">Confirm Password</label>
                   <input
                     type="password"
-                    id="password"
-                    name="pwd"
+                    id="confirmPassword"
+                    name="confirmpwd"
                     onChange={this.handleChange}
-                    style={{ position: "relative" }}
-                    value={this.state.pwd}
+                    value={this.state.confirmpwd}
                   />
-                  <span className="field-icon changeVisibilityLogin">
-                    <span className="material-icons" onClick={this.changeVisibility}>
-                      visibility
-                    </span>
-                  </span>
                 </div>
                 <br />
                 <div className="form-field">
-                  {this.state.logginIn ? (
+                  {this.state.debounce ? (
                     <div className="center">
                       <div className="preloader-wrapper small active">
                         <div className="spinner-layer spinner-blue-only">
@@ -102,8 +94,12 @@ class Login extends Component {
                       </div>
                     </div>
                   ) : (
-                    <button className="btn-large blue waves-effect waves-dark" style={{ width: "100%" }} onClick={this.loginUser}>
-                      Login
+                    <button
+                      className="btn-large purple darken-3 waves-effect waves-dark"
+                      style={{ width: "100%" }}
+                      onClick={this.registerUser}
+                    >
+                      Register
                     </button>
                   )}
                 </div>
@@ -117,4 +113,4 @@ class Login extends Component {
   }
 }
 
-export default withRouter(Login);
+export default withRouter(Register);
