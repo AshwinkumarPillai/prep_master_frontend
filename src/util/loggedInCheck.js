@@ -7,9 +7,7 @@ const LoggedInCheck = ({ component: Component, ...rest }) => {
   return (
     <Route
       {...rest}
-      render={(props) =>
-        !isLoggedIn ? <Component {...props} /> : <Redirect to={{ pathname: "/admin", state: { from: props.location } }} />
-      }
+      render={(props) => (!isLoggedIn ? <Component {...props} /> : <Redirect to={{ pathname: "/", state: { from: props.location } }} />)}
     />
   );
 };

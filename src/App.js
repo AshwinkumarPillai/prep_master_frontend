@@ -4,6 +4,7 @@ import "./App.css";
 import AdminLogin from "./pages/admin/admin_login";
 import Admin from "./pages/admin/admin";
 import PrivateRoute from "./util/privateRoute";
+import AdminLoggedInCheck from "./util/adminLoggedInCheck";
 import LoggedInCheck from "./util/loggedInCheck";
 import AdminTestRoute from "./util/adminTestRoute";
 import AdminPageRoute from "./util/adminPageRoute";
@@ -24,9 +25,9 @@ function App() {
           <Route exact path="/" component={Home}></Route>
           <PrivateRoute exact path="/test/:id" component={Test}></PrivateRoute>
           <AdminPageRoute exact path="/admin" component={Admin}></AdminPageRoute>
-          <LoggedInCheck exact path="/admin/login" component={AdminLogin}></LoggedInCheck>
+          <AdminLoggedInCheck exact path="/admin/login" component={AdminLogin}></AdminLoggedInCheck>
           <AdminTestRoute exact path="/admin/test_edit" component={AdminTest}></AdminTestRoute>
-          <Route exact path="/login" component={Login}></Route>
+          <LoggedInCheck exact path="/login" component={Login}></LoggedInCheck>
           <Route exact path="/register" component={Register}></Route>
           <Route path="*" component={PageNotFound}></Route>
         </Switch>
