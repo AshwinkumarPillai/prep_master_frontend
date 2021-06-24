@@ -5,33 +5,89 @@
 }
 
 .testCard {
-  transition: 0.2s;
+  transition: 0.3s;
   transform: scale(0.9);
 }
 
 .testCard:hover {
-  transform: scale(1);
+  transform: scale(0.95);
+}
+
+.ptest {
+  display: flex;
+  align-items: center;
+}
+
+.customLabel {
+  font-size: 16px;
+  color: black;
+  cursor: pointer;
+}
+
+.test_question_card {
+  /* background-color: #d1ecf1; */
+  border: 2px solid black;
+}
+
+/* .row {
+  border: 1px solid red;
+}
+
+.col {
+  border: 1px solid green;
+} */
+
+.sidenav {
+  z-index: 1001;
 }
 
 #clockdiv {
   font-family: sans-serif;
   color: #fff;
   display: inline-block;
-  font-weight: 100;
+  /* font-weight: 100; */
   text-align: center;
-  font-size: 30px;
+  font-size: 15px;
+  position: fixed;
+  z-index: 1000;
+  right: 5vw;
 }
+
+@media only screen and (max-width: 1000px) {
+  #clockdiv {
+    transform: scale(0.6);
+    right: 0;
+  }
+}
+
+@media only screen and (max-width: 500px) {
+  #clockdiv {
+    /* display: flex;
+    justify-content: center;
+    position: relative; */
+    top: -10px;
+    right: -40px;
+  }
+  #clockdiv > div {
+    display: inline-block;
+  }
+}
+
+/* .smalltext {
+  color: black;
+} */
 
 #clockdiv > div {
   padding: 10px;
   border-radius: 3px;
-  background: #00bf96;
-  display: inline-block;
+  background: #485460;
+  /* display: inline-block; */
+  margin: 10px;
 }
 
 #clockdiv div > span {
   padding: 15px;
   border-radius: 3px;
-  background: #00816a;
+  background: #1e272e;
   display: inline-block;
 }

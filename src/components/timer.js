@@ -13,7 +13,6 @@ export default class Timer extends Component {
     this.timer = setInterval(() => {
       this.getRemainingTime(this.props.endTime);
     }, 1000);
-    console.log(this.timer);
   }
 
   componentWillUnmount() {

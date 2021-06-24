@@ -45,7 +45,7 @@ class Test extends Component {
       <React.Fragment>
         {this.state.loadedTest ? (
           <React.Fragment>
-            <h4 className="center" style={{ textTransform: "capitalize" }}>
+            <h4 className="center" style={{ textTransform: "capitalize", marginBottom: "40px" }}>
               {this.state.name}
             </h4>
             {this.state.time_limit !== -1 && <Timer endTime={this.state.endTime} />}
@@ -53,49 +53,53 @@ class Test extends Component {
             <div className="container">
               {this.state.questions.map((question, index) => (
                 <React.Fragment key={index}>
-                  <div className="card" style={{ padding: "20px" }}>
+                  <div className="card test_question_card orange lighten-3" style={{ padding: "20px" }}>
                     <div className="row">
-                      <div className="col s1">
-                        <h5>{index + 1}.</h5>
-                      </div>
-                      <div className="col s11">
-                        <h5>{question.title}</h5>
+                      <div className="col s12">
+                        <h6>
+                          <span className="new badge black left" data-badge-caption="." style={{ marginRight: "8px" }}>
+                            {index + 1}
+                          </span>
+                          {question.title}
+                        </h6>
                       </div>
                     </div>
+                    <hr style={{ border: ".5px solid black" }} />
                     {question.multiCorrect ? (
                       <React.Fragment>
                         {question.options.map((option, index2) => (
-                          <div className="row" key={index2}>
-                            <div className="col s1">
-                              <p>
-                                <label>
-                                  <input type="checkbox" className="filled-in" />
-                                  <span></span>
-                                </label>
-                              </p>
-                            </div>
-                            <div className="col s11">
-                              <h6>{option.value}</h6>
-                            </div>
-                          </div>
+                          <React.Fragment key={index2}>
+                            <p className="ptest">
+                              <label>
+                                <input id={option.value + index2} type="checkbox" className="filled-in test_option_checkbox" />
+                                <span></span>
+                              </label>
+                              <label htmlFor={option.value + index2} className="customLabel">
+                                {option.value}
+                              </label>
+                            </p>
+                          </React.Fragment>
                         ))}
                       </React.Fragment>
                     ) : (
                       <React.Fragment>
                         {question.options.map((option, index2) => (
-                          <div className="row" key={index2}>
-                            <div className="col s1">
-                              <p>
-                                <label>
-                                  <input className="with-gap" name="selectedOption" type="radio" />
-                                  <span></span>
-                                </label>
-                              </p>
-                            </div>
-                            <div className="col s11">
-                              <h6>{option.value}</h6>
-                            </div>
-                          </div>
+                          <React.Fragment key={index2}>
+                            <p className="ptest">
+                              <label>
+                                <input
+                                  type="radio"
+                                  id={question.title + index2}
+                                  name={question.title}
+                                  className="with-gap test_option_radio"
+                                />
+                                <span></span>
+                              </label>
+                              <label htmlFor={question.title + index2} className="customLabel">
+                                {option.value}
+                              </label>
+                            </p>
+                          </React.Fragment>
                         ))}
                       </React.Fragment>
                     )}
@@ -105,6 +109,7 @@ class Test extends Component {
                 </React.Fragment>
               ))}
             </div>
+            <br />
             <div className="container">
               <div className="row">
                 <button className="btn blue darken-2 waves-effect">
@@ -112,6 +117,7 @@ class Test extends Component {
                 </button>
               </div>
             </div>
+            <br />
           </React.Fragment>
         ) : (
           "Loading Test..."
