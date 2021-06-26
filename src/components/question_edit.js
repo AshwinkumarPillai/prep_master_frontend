@@ -1,10 +1,9 @@
+import { nanoid } from "nanoid";
 import React, { Component } from "react";
 
 import { updateQuestion } from "../api/auth";
 
 export default class question_edit extends Component {
-  currentOptId = 0;
-
   constructor(props) {
     super(props);
     this.state = {
@@ -16,14 +15,6 @@ export default class question_edit extends Component {
       multiCorrect: props.question.multiCorrect,
       correctOptions: props.question.correctOptions,
     };
-    this.setCurrOptId();
-  }
-
-  setCurrOptId() {
-    for (let opt of this.props.question.options) {
-      this.currentOptId = opt._id > this.currentOptId ? opt._id : this.currentOptId;
-    }
-    this.currentOptId++;
   }
 
   handleChange = (e) => {
@@ -38,8 +29,7 @@ export default class question_edit extends Component {
   };
 
   addOption = async () => {
-    this.setCurrOptId();
-    let options = [...this.state.options, { value: "", _id: this.currentOptId }];
+    let options = [...this.state.options, { value: "", _id: nanoid(12) }];
     await this.setState({ options });
   };
 
@@ -47,11 +37,9 @@ export default class question_edit extends Component {
     let options = [...this.state.options];
     options.splice(index, 1);
     await this.setState({ options });
-    this.setCurrOptId();
   };
 
   allowMultiCorrect = (e) => {
-    console.log(e.target.checked);
     this.setState({ multiCorrect: e.target.checked, correctOption: null, correctOptions: [] });
   };
 
@@ -87,7 +75,6 @@ export default class question_edit extends Component {
       let res = await updateQuestion(data);
       let resp = res.data;
       if (resp.status === 200) {
-        console.log(resp.question);
         this.setState({ ...resp.question });
       }
       this.setState({ savingQuestion: false });

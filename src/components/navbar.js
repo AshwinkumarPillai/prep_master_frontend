@@ -35,6 +35,11 @@ export default class navbar extends Component {
                     </a>
                   </li>
                   <li>
+                    <a href="/history" className="btn indigo">
+                      Test History
+                    </a>
+                  </li>
+                  <li>
                     <a
                       href="/login"
                       className="btn orange darken-4"
@@ -70,6 +75,11 @@ export default class navbar extends Component {
               <li>
                 <a href="/admin" className="btn black">
                   Admin
+                </a>
+              </li>
+              <li>
+                <a href="/history" className="btn indigo">
+                  Test History
                 </a>
               </li>
               <li>

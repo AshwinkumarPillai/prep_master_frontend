@@ -3,7 +3,7 @@ import { withRouter } from "react-router-dom";
 import QuestionEdit from "../../components/question_edit";
 import QuestionAdd from "../../components/question_add";
 
-import { updateTest, fetchTestDetails, searchQuestion } from "../../api/auth";
+import { updateTest, fetchFullTestDetails, searchQuestion } from "../../api/auth";
 
 class admin_test extends Component {
   constructor(props) {
@@ -21,7 +21,7 @@ class admin_test extends Component {
   async fetchTest() {
     let test = JSON.parse(localStorage.getItem("adminTest"));
     try {
-      let res = await fetchTestDetails({ testId: test._id });
+      let res = await fetchFullTestDetails({ testId: test._id });
       let resp = res.data;
       if (resp.status === 200) {
         this.setState({ test: resp.test });
@@ -44,7 +44,6 @@ class admin_test extends Component {
   };
 
   saveQuestion = (question) => {
-    console.log(question);
     this.setState({ test: { ...this.state.test, questions: [...this.state.test.questions, question] } });
   };
 
@@ -81,6 +80,7 @@ class admin_test extends Component {
     if (val.length < 5) return;
     let res = await searchQuestion(val);
     console.log(res);
+    //TODO
   };
 
   render() {
@@ -126,7 +126,7 @@ class admin_test extends Component {
                 <QuestionAdd cancelAddQuestion={this.cancelAddQuestion} saveQuestion={this.saveQuestion} />
               ) : (
                 <React.Fragment>
-                  <div className="row">
+                  {/* <div className="row">
                     <div className="col s12">
                       <nav>
                         <div className="nav-wrapper purple darken-4">
@@ -142,7 +142,7 @@ class admin_test extends Component {
                         </div>
                       </nav>
                     </div>
-                  </div>
+                  </div> */}
                   <div className="row">
                     <div className="col">
                       <button

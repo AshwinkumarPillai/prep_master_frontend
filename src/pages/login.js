@@ -45,7 +45,6 @@ class Login extends Component {
         localStorage.setItem("user", JSON.stringify(user));
         this.props.history.push("/");
         window.location.reload();
-        console.log("Successfully LoggedIn");
       }
     } catch (error) {
       this.setState({ logginIn: false });

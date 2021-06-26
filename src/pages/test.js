@@ -1,14 +1,24 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 
-import { fetchTestDetails } from "../api/auth";
+import { fetchTestDetails, saveUserTestHistory } from "../api/auth";
 
 import Timer from "../components/timer";
+import Question from "./question";
 
 class Test extends Component {
   constructor(props) {
     super(props);
-    this.state = { name: "", time_limit: -1, questions: [], loadedTest: false, endTime: 0 };
+    this.state = {
+      message: "Loading...",
+      testId: null,
+      name: "",
+      time_limit: -1,
+      questions: [],
+      loadedTest: false,
+      endTime: 0,
+      selectedOptions: new Map(),
+    };
   }
 
   componentDidMount() {
@@ -19,26 +29,70 @@ class Test extends Component {
     try {
       let arr = window.location.href.split("/");
       let testId = arr[arr.length - 1];
+      this.setState({ testId });
       let res = await fetchTestDetails({ testId });
       let resp = res.data;
       if (resp.status === 200) {
+        await this.setTestData(resp.test);
         let time_limit = resp.test.time_limit;
         let dt = new Date();
         if (time_limit > 0) {
           dt = new Date();
           dt.setMinutes(dt.getMinutes() + time_limit);
         }
-        this.setState({ ...resp.test, loadedTest: true, endTime: dt.getTime() });
+        await this.setState({ ...resp.test, endTime: dt.getTime(), loadedTest: true });
         return;
       }
       alert("Error! Please try again");
       this.props.history.push("/");
     } catch (error) {
       alert("Error! Please try again");
-      // console.log(error);
       this.props.history.push("/");
     }
   }
+
+  selectOption = (questionId, optionSet) => {
+    let m = this.state.selectedOptions;
+    m.set(questionId, optionSet);
+    this.setState({ selectedOptions: m });
+  };
+
+  setTestData = async (test) => {
+    let m = this.state.selectedOptions;
+    test.questions.forEach((question) => {
+      m.set(question._id, new Set());
+    });
+    await this.setState({ selectedOptions: m });
+  };
+
+  createSelectedOptionObjects(selectedOptions) {
+    let obj = {};
+    for (const [key, value] of selectedOptions.entries()) {
+      obj[key] = [...value];
+    }
+    return obj;
+  }
+
+  submitTest = async () => {
+    try {
+      let data = {
+        userId: JSON.parse(localStorage.getItem("user"))._id,
+        testId: this.state.testId,
+        selectedOptionsMap: this.createSelectedOptionObjects(this.state.selectedOptions),
+      };
+      this.setState({ message: "Submitting Test...", loadedTest: false });
+      let res = await saveUserTestHistory(data);
+      if (res.data.status === 200) {
+        this.setState({ message: "Fetching Result..." });
+        let userTestHistoryId = res.data.userTestHistoryId;
+        if (userTestHistoryId) this.props.history.push(`/result/${userTestHistoryId}`);
+      }
+    } catch (error) {
+      console.log(error);
+      this.setState({ loadedTest: true });
+      alert("Error Submitting Test!");
+    }
+  };
 
   render() {
     return (
@@ -48,79 +102,34 @@ class Test extends Component {
             <h4 className="center" style={{ textTransform: "capitalize", marginBottom: "40px" }}>
               {this.state.name}
             </h4>
-            {this.state.time_limit !== -1 && <Timer endTime={this.state.endTime} />}
+            {this.state.time_limit !== -1 && <Timer endTime={this.state.endTime} submitTest={this.submitTest} />}
 
             <div className="container">
               {this.state.questions.map((question, index) => (
-                <React.Fragment key={index}>
-                  <div className="card test_question_card orange lighten-3" style={{ padding: "20px" }}>
-                    <div className="row">
-                      <div className="col s12">
-                        <h6>
-                          <span className="new badge black left" data-badge-caption="." style={{ marginRight: "8px" }}>
-                            {index + 1}
-                          </span>
-                          {question.title}
-                        </h6>
-                      </div>
-                    </div>
-                    <hr style={{ border: ".5px solid black" }} />
-                    {question.multiCorrect ? (
-                      <React.Fragment>
-                        {question.options.map((option, index2) => (
-                          <React.Fragment key={index2}>
-                            <p className="ptest">
-                              <label>
-                                <input id={option.value + index2} type="checkbox" className="filled-in test_option_checkbox" />
-                                <span></span>
-                              </label>
-                              <label htmlFor={option.value + index2} className="customLabel">
-                                {option.value}
-                              </label>
-                            </p>
-                          </React.Fragment>
-                        ))}
-                      </React.Fragment>
-                    ) : (
-                      <React.Fragment>
-                        {question.options.map((option, index2) => (
-                          <React.Fragment key={index2}>
-                            <p className="ptest">
-                              <label>
-                                <input
-                                  type="radio"
-                                  id={question.title + index2}
-                                  name={question.title}
-                                  className="with-gap test_option_radio"
-                                />
-                                <span></span>
-                              </label>
-                              <label htmlFor={question.title + index2} className="customLabel">
-                                {option.value}
-                              </label>
-                            </p>
-                          </React.Fragment>
-                        ))}
-                      </React.Fragment>
-                    )}
-
-                    <br />
-                  </div>
-                </React.Fragment>
+                <Question
+                  question={question}
+                  selectOption={this.selectOption}
+                  selectedOptions={this.state.selectedOptions.get(question._id)}
+                  index={index + 1}
+                  key={index}
+                />
               ))}
             </div>
             <br />
             <div className="container">
               <div className="row">
-                <button className="btn blue darken-2 waves-effect">
-                  Submit Test <i className="material-icons left">done_all</i>
+                <button className="btn blue darken-2 waves-effect" onClick={this.submitTest}>
+                  Submit Test
+                  <i className="material-icons left">done_all</i>
                 </button>
               </div>
             </div>
             <br />
           </React.Fragment>
         ) : (
-          "Loading Test..."
+          <div className="flex_center" style={{ height: "100vh" }}>
+            {this.state.message}
+          </div>
         )}
       </React.Fragment>
     );

@@ -17,6 +17,10 @@ class admin extends Component {
   }
 
   async checkAdmin() {
+    if (!localStorage.getItem("token")) {
+      this.setState({ message: "You are not authorised to view this page" });
+      return;
+    }
     try {
       let resp = await authAdmin();
       if (resp.data.status === 200) {

@@ -15,6 +15,8 @@ import PageNotFound from "./pages/PageNotFound";
 import Home from "./pages/home";
 import Test from "./pages/test";
 import Register from "./pages/register";
+import Result from "./pages/result";
+import History from "./pages/history";
 
 function App() {
   return (
@@ -24,6 +26,8 @@ function App() {
         <Switch>
           <Route exact path="/" component={Home}></Route>
           <PrivateRoute exact path="/test/:id" component={Test}></PrivateRoute>
+          <PrivateRoute exact path="/result/:id" component={Result}></PrivateRoute>
+          <PrivateRoute exact path="/history" component={History}></PrivateRoute>
           <AdminPageRoute exact path="/admin" component={Admin}></AdminPageRoute>
           <AdminLoggedInCheck exact path="/admin/login" component={AdminLogin}></AdminLoggedInCheck>
           <AdminTestRoute exact path="/admin/test_edit" component={AdminTest}></AdminTestRoute>

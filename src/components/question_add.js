@@ -2,15 +2,15 @@ import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 
 import { addQuestion } from "../api/auth";
+import { nanoid } from "nanoid";
 
 class QuestionAdd extends Component {
-  currentOptId = 0;
   constructor(props) {
     super(props);
     this.state = {
       title: "",
-      options: [{ value: "", _id: 0 }],
-      correctOption: 0,
+      options: [{ value: "", _id: nanoid(12) }],
+      correctOption: null,
       explanation: "",
       multiCorrect: false,
       correctOptions: [],
@@ -30,7 +30,7 @@ class QuestionAdd extends Component {
   };
 
   addOption = () => {
-    let options = [...this.state.options, { value: "", _id: ++this.currentOptId }];
+    let options = [...this.state.options, { value: "", _id: nanoid(12) }];
     this.setState({ options });
   };
 
@@ -41,7 +41,6 @@ class QuestionAdd extends Component {
   };
 
   allowMultiCorrect = (e) => {
-    console.log(e.target.checked);
     this.setState({ multiCorrect: e.target.checked, correctOption: null, correctOptions: [] });
   };
 
