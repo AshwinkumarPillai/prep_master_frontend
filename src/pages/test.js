@@ -30,7 +30,7 @@ class Test extends Component {
       let arr = window.location.href.split("/");
       let testId = arr[arr.length - 1];
       this.setState({ testId });
-      let res = await fetchTestDetails({ testId });
+      let res = await fetchTestDetails(testId);
       let resp = res.data;
       if (resp.status === 200) {
         await this.setTestData(resp.test);
@@ -46,7 +46,7 @@ class Test extends Component {
       alert("Error! Please try again");
       this.props.history.push("/");
     } catch (error) {
-      alert("Error! Please try again");
+      alert("The requested resource does not exist.");
       this.props.history.push("/");
     }
   }

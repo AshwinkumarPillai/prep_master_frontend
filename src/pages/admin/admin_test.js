@@ -21,7 +21,7 @@ class admin_test extends Component {
   async fetchTest() {
     let test = JSON.parse(localStorage.getItem("adminTest"));
     try {
-      let res = await fetchFullTestDetails({ testId: test._id });
+      let res = await fetchFullTestDetails(test._id);
       let resp = res.data;
       if (resp.status === 200) {
         this.setState({ test: resp.test });

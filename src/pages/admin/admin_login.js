@@ -20,7 +20,6 @@ class admin_login extends Component {
       let data = { username: this.state.username, pwd: this.state.pwd };
       let res = await adminLogin(data);
       let resp = res.data;
-      alert(resp.message);
       this.setState({ logginIn: false });
       if (resp.status === 200) {
         let user = resp.user;

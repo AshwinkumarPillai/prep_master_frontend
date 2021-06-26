@@ -14,7 +14,7 @@ export default class history extends Component {
 
   async loadHistory() {
     try {
-      let res = await fetchUserHistory({ userId: JSON.parse(localStorage.getItem("user"))._id });
+      let res = await fetchUserHistory();
       let resp = res.data;
       if (resp.status === 200) {
         let userHistory = resp.userHistory;

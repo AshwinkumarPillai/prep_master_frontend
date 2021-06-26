@@ -1,18 +1,29 @@
 import React, { Component } from "react";
 
 import M from "materialize-css";
+import { authAdmin } from "../api/auth";
 
 export default class navbar extends Component {
   constructor(props) {
     super(props);
     let isLoggedIn = localStorage.getItem("user") ? true : false;
-    this.state = { isLoggedIn };
+    this.state = { isLoggedIn, isAdmin: false };
   }
 
   componentDidMount() {
     let elems = document.querySelectorAll(".sidenav");
     M.Sidenav.init(elems, {});
+    this.checkAdmin();
     // let instances = M.Sidenav.init(elems, {});
+  }
+
+  async checkAdmin() {
+    try {
+      let resp = await authAdmin();
+      if (resp.status === 200) {
+        this.setState({ isAdmin: true });
+      }
+    } catch (error) {}
   }
 
   render() {
@@ -29,11 +40,13 @@ export default class navbar extends Component {
             <ul id="nav-mobile" className="right hide-on-med-and-down">
               {this.state.isLoggedIn ? (
                 <React.Fragment>
-                  <li>
-                    <a href="/admin" className="btn black">
-                      Admin
-                    </a>
-                  </li>
+                  {this.state.isAdmin ? (
+                    <li>
+                      <a href="/admin" className="btn black">
+                        Admin
+                      </a>
+                    </li>
+                  ) : null}
                   <li>
                     <a href="/history" className="btn indigo">
                       Test History
@@ -72,11 +85,13 @@ export default class navbar extends Component {
         <ul id="mobile-demo" className="sidenav">
           {this.state.isLoggedIn ? (
             <React.Fragment>
-              <li>
-                <a href="/admin" className="btn black">
-                  Admin
-                </a>
-              </li>
+              {this.state.isAdmin ? (
+                <li>
+                  <a href="/admin" className="btn black">
+                    Admin
+                  </a>
+                </li>
+              ) : null}
               <li>
                 <a href="/history" className="btn indigo">
                   Test History
