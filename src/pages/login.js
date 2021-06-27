@@ -37,7 +37,6 @@ class Login extends Component {
       }
       let res = await login(data);
       let resp = res.data;
-      alert(resp.message);
       this.setState({ logginIn: false });
       if (resp.status === 200) {
         let user = resp.user;

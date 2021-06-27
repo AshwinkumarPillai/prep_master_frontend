@@ -35,7 +35,6 @@ class Register extends Component {
       this.setState({ debounce: true });
       let res = await register({ username, pwd });
       let resp = res.data;
-      alert(resp.message);
       if (resp.status === 200) {
         this.props.history.push("/login");
         return;
