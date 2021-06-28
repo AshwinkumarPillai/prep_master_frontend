@@ -105,15 +105,25 @@ class Test extends Component {
             {this.state.time_limit !== -1 && <Timer endTime={this.state.endTime} submitTest={this.submitTest} />}
 
             <div className="container">
-              {this.state.questions.map((question, index) => (
-                <Question
-                  question={question}
-                  selectOption={this.selectOption}
-                  selectedOptions={this.state.selectedOptions.get(question._id)}
-                  index={index + 1}
-                  key={index}
-                />
-              ))}
+              {this.state.questions.map((question, index) => {
+                let img = question.image;
+                let imageUrl = null;
+                if (img) {
+                  let ctype = img.contentType.split("/")[1];
+                  let og = Buffer.from(img.data, "base64", "binary").toString("base64");
+                  imageUrl = `data:image/${ctype};base64,${og}`;
+                }
+                return (
+                  <Question
+                    question={question}
+                    selectOption={this.selectOption}
+                    selectedOptions={this.state.selectedOptions.get(question._id)}
+                    index={index + 1}
+                    key={index}
+                    imageUrl={imageUrl}
+                  />
+                );
+              })}
             </div>
             <br />
             <div className="container">

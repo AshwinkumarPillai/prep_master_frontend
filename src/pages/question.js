@@ -25,6 +25,11 @@ const question = (props) => {
             </h6>
           </div>
         </div>
+        {props.imageUrl && (
+          <div style={{ textAlign: "center", margin: "40px 10px" }}>
+            <img src={props.imageUrl} alt="error displaying" className="responsive-img" />
+          </div>
+        )}
 
         <hr style={{ border: ".5px solid black" }} />
         <div>

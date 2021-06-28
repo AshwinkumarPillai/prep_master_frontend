@@ -15,12 +15,13 @@ export const updateTest = (payload) => httpClient.post("/test/update", payload);
 export const deleteTest = (payload) => httpClient.post("/test/delete", payload);
 
 // Question
-export const addQuestion = (payload) => httpClient.post("/question/add", payload);
-export const updateQuestion = (payload) => httpClient.post("/question/update", payload);
+export const addQuestion = (payload) => httpClient.post("/question/add", payload, { headers: { "Content-Type": "multipart/form-data" } });
+export const updateQuestion = (payload) =>
+  httpClient.post("/question/update", payload, { headers: { "Content-Type": "multipart/form-data" } });
 export const searchQuestion = (payload) => httpClient.get(`/question/search?q=${payload}`);
 
 // User Test Histroy
 export const saveUserTestHistory = (payload) => httpClient.post("user/saveUserTestHistory", payload);
 export const fetchUserTestHistroy = (payload) => httpClient.post("user/fetchUserTestHistroy", payload);
-export const fetchAllUserTestHistory = (payload) => httpClient.post("user/fetchAllUserTestHistory", payload);
+export const fetchAllUserTestHistory = (payload) => httpClient.get("user/fetchAllUserTestHistory", payload);
 export const fetchUserHistory = () => httpClient.get("user/fetchUserHistroy");

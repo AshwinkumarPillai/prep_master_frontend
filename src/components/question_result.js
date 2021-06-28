@@ -14,12 +14,18 @@ export default class question_result extends Component {
       correctOption: question.correctOption,
       correctOptions: question.correctOptions,
       explanation: question.explanation,
+      dispImage: null,
     };
   }
 
   componentDidMount() {
     let elems = document.querySelectorAll(".collapsible");
     M.Collapsible.init(elems, {});
+    if (this.props.question.image) {
+      let ctype = this.props.question.image.contentType.split("/")[1];
+      let og = Buffer.from(this.props.question.image.data, "base64", "binary").toString("base64");
+      this.setState({ dispImage: `data:image/${ctype};base64,${og}` });
+    }
   }
 
   chooseState = (optionId) => {
@@ -64,6 +70,11 @@ export default class question_result extends Component {
               {this.getMark()} / 1
             </div>
           </div>
+          {this.state.dispImage && (
+            <div style={{ textAlign: "center", margin: "40px 10px" }}>
+              <img src={this.state.dispImage} alt="error displaying" className="responsive-img" />
+            </div>
+          )}
           <hr style={{ border: ".5px solid black" }} />
           {this.state.multiCorrect ? (
             <React.Fragment>

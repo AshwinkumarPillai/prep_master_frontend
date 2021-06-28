@@ -13,7 +13,7 @@ export default class navbar extends Component {
   componentDidMount() {
     let elems = document.querySelectorAll(".sidenav");
     M.Sidenav.init(elems, {});
-    this.checkAdmin();
+    if (!localStorage.getItem("notAdmin") && this.state.isLoggedIn) this.checkAdmin();
     // let instances = M.Sidenav.init(elems, {});
   }
 
@@ -23,7 +23,9 @@ export default class navbar extends Component {
       if (resp.status === 200) {
         this.setState({ isAdmin: true });
       }
-    } catch (error) {}
+    } catch (error) {
+      localStorage.setItem("notAdmin", true);
+    }
   }
 
   render() {
@@ -34,9 +36,9 @@ export default class navbar extends Component {
             <a href="/" style={{ paddingLeft: "20px", fontStyle: "italic" }}>
               Prep Master
             </a>
-            <a href="#" data-target="mobile-demo" className="sidenav-trigger">
+            <span data-target="mobile-demo" className="sidenav-trigger" style={{ cursor: "pointer" }}>
               <i className="material-icons">menu</i>
-            </a>
+            </span>
             <ul id="nav-mobile" className="right hide-on-med-and-down">
               {this.state.isLoggedIn ? (
                 <React.Fragment>

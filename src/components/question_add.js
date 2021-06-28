@@ -15,6 +15,8 @@ class QuestionAdd extends Component {
       multiCorrect: false,
       correctOptions: [],
       savingQuestion: false,
+      imageFile: null,
+      dispImage: "",
     };
   }
 
@@ -44,8 +46,8 @@ class QuestionAdd extends Component {
     this.setState({ multiCorrect: e.target.checked, correctOption: null, correctOptions: [] });
   };
 
-  setCorrectOption = (optionId) => {
-    this.setState({ correctOption: optionId });
+  setCorrectOption = async (optionId) => {
+    await this.setState({ correctOption: optionId });
   };
 
   setMultiCorrectOption = (e, optionId) => {
@@ -71,8 +73,16 @@ class QuestionAdd extends Component {
         alert("Please add necessary fields");
         this.setState({ savingQuestion: false });
       }
-      let data = { title, options, correctOption, multiCorrect, correctOptions, explanation };
-      let res = await addQuestion(data);
+      // let data = { title, options, correctOption, multiCorrect, correctOptions, explanation };
+      let fd = new FormData();
+      fd.append("title", title);
+      fd.append("options", JSON.stringify(options));
+      fd.append("correctOption", correctOption);
+      fd.append("multiCorrect", multiCorrect);
+      fd.append("correctOptions", JSON.stringify(correctOptions));
+      fd.append("explanation", explanation);
+      if (this.state.imageFile) fd.append("image", this.state.imageFile);
+      let res = await addQuestion(fd);
       let resp = res.data;
       if (resp.status === 200) {
         try {
@@ -93,6 +103,19 @@ class QuestionAdd extends Component {
   checkOptionCorrect = (optionId) => {
     let index = this.state.correctOptions.findIndex((optId) => optId === optionId);
     return index !== -1;
+  };
+
+  handleImage = (e) => {
+    let file = e.target.files[0];
+    const reader = new FileReader();
+    if (file != null) {
+      reader.readAsDataURL(file);
+    }
+    reader.onload = () => {
+      if (reader.readyState === 2) {
+        this.setState({ dispImage: reader.result, imageFile: file });
+      }
+    };
   };
 
   render() {
@@ -142,6 +165,17 @@ class QuestionAdd extends Component {
                 </div>
               </div>
               <React.Fragment>
+                <div style={{ margin: "40px 10px" }}>
+                  <input type="file" accept="image/*" onChange={this.handleImage} hidden={true} ref={(inp) => (this.imageRef = inp)} />
+                  <button className="btn" onClick={() => this.imageRef.click()}>
+                    Add Image
+                  </button>
+                  <br />
+                  <br />
+                  {this.state.imageFile && <img src={this.state.dispImage} alt="" className="responsive-img" />}
+                </div>
+              </React.Fragment>
+              <React.Fragment>
                 {this.state.options.map((option, index) => (
                   <div className="row" key={option._id}>
                     <div className="col s1">
@@ -162,7 +196,7 @@ class QuestionAdd extends Component {
                           <label>
                             <input
                               className="with-gap"
-                              name="selectedOption"
+                              name={"selectedOption" + this.state.title}
                               type="radio"
                               onChange={() => this.setCorrectOption(option._id)}
                               checked={this.state.correctOption === option._id}

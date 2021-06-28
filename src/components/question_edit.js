@@ -4,6 +4,7 @@ import React, { Component } from "react";
 import { updateQuestion } from "../api/auth";
 
 export default class question_edit extends Component {
+  img;
   constructor(props) {
     super(props);
     this.state = {
@@ -14,7 +15,18 @@ export default class question_edit extends Component {
       explanation: props.question.explanation,
       multiCorrect: props.question.multiCorrect,
       correctOptions: props.question.correctOptions,
+      imageFile: null,
+      dispImage: "",
+      image: props.question.image ? props.question.image : null,
     };
+  }
+
+  componentDidMount() {
+    if (this.state.image) {
+      let ctype = this.state.image.contentType.split("/")[1];
+      let og = Buffer.from(this.state.image.data, "base64", "binary").toString("base64");
+      this.setState({ dispImage: `data:image/${ctype};base64,${og}` });
+    }
   }
 
   handleChange = (e) => {
@@ -71,11 +83,25 @@ export default class question_edit extends Component {
         alert("Please add necessary fields");
         this.setState({ savingQuestion: false });
       }
-      let data = { questionId: _id, title, options, correctOption, multiCorrect, correctOptions, explanation };
-      let res = await updateQuestion(data);
+      // let data = { questionId: _id, title, options, correctOption, multiCorrect, correctOptions, explanation };
+      let fd = new FormData();
+      fd.append("questionId", _id);
+      fd.append("title", title);
+      fd.append("options", JSON.stringify(options));
+      fd.append("correctOption", correctOption);
+      fd.append("multiCorrect", multiCorrect);
+      fd.append("correctOptions", JSON.stringify(correctOptions));
+      fd.append("explanation", explanation);
+      if (this.state.imageFile) fd.append("image", this.state.imageFile);
+      let res = await updateQuestion(fd);
       let resp = res.data;
       if (resp.status === 200) {
         this.setState({ ...resp.question });
+        if (this.state.image) {
+          let ctype = this.state.image.contentType.split("/")[1];
+          let og = Buffer.from(this.state.image.data, "base64", "binary").toString("base64");
+          this.setState({ dispImage: `data:image/${ctype};base64,${og}` });
+        }
       }
       this.setState({ savingQuestion: false });
     } catch (error) {
@@ -87,6 +113,19 @@ export default class question_edit extends Component {
   checkOptionCorrect = (optionId) => {
     let index = this.state.correctOptions.findIndex((optId) => optId === optionId);
     return index !== -1;
+  };
+
+  handleImage = (e) => {
+    let file = e.target.files[0];
+    const reader = new FileReader();
+    if (file != null) {
+      reader.readAsDataURL(file);
+    }
+    reader.onload = () => {
+      if (reader.readyState === 2) {
+        this.setState({ dispImage: reader.result, imageFile: file });
+      }
+    };
   };
 
   render() {
@@ -129,6 +168,19 @@ export default class question_edit extends Component {
                 </div>
               </div>
               <React.Fragment>
+                <div style={{ margin: "40px 10px" }}>
+                  <input type="file" accept="image/*" onChange={this.handleImage} hidden={true} ref={(inp) => (this.imageRef = inp)} />
+                  <button className="btn" onClick={() => this.imageRef.click()}>
+                    {this.state.dispImage ? "Change Image" : "Add Image"}
+                  </button>
+                  <br />
+                  <br />
+                  <div style={{ textAlign: "center" }}>
+                    {this.state.dispImage && <img src={this.state.dispImage} alt="error displaying img" className="responsive-img" />}
+                  </div>
+                </div>
+              </React.Fragment>
+              <React.Fragment>
                 {this.state.options.map((option, index) => (
                   <div className="row" key={option._id}>
                     <div className="col s1">
@@ -149,7 +201,7 @@ export default class question_edit extends Component {
                           <label>
                             <input
                               className="with-gap"
-                              name="selectedOption"
+                              name={"selectedOption" + this.state._id}
                               type="radio"
                               onChange={() => this.setCorrectOption(option._id)}
                               checked={this.state.correctOption === option._id}
