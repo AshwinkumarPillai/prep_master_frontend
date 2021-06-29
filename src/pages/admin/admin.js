@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 
-import { authAdmin, fetchAllTests, createTest, deleteTest } from "../../api/auth";
+import { authAdmin, fetchAllAdminTests, createTest, deleteTest } from "../../api/auth";
 
 import M from "materialize-css";
 
@@ -27,11 +27,20 @@ class admin extends Component {
         await this.setState({ isAdmin: true });
         let elems = document.querySelectorAll(".modal");
         this.Modalinstance = M.Modal.init(elems, {})[0];
-        let resp = await fetchAllTests();
-        if (resp.data.status === 200) await this.setState({ tests: resp.data.tests });
+        this.fetchTests();
       } else this.setState({ message: "You are not authorised to view this page" });
     } catch (error) {
       this.setState({ message: "You are not authorised to view this page" });
+    }
+  }
+
+  async fetchTests() {
+    try {
+      let resp = await fetchAllAdminTests();
+      if (resp.data.status === 200) await this.setState({ tests: resp.data.tests });
+    } catch (error) {
+      console.log(error);
+      alert("Error fetching tests");
     }
   }
 
@@ -80,10 +89,18 @@ class admin extends Component {
         {this.state.isAdmin ? (
           <React.Fragment>
             <div className="container" style={{ marginTop: "10vh" }}>
-              <span style={{ marginRight: "30px" }}>Add Tests</span>
-              <button className="btn-floating btn-medium waves-effect waves-light blue btn modal-trigger" data-target="createTestModal">
-                <i className="material-icons">add</i>
-              </button>
+              <span>
+                <button className="btn-medium waves-effect waves-light blue btn modal-trigger" data-target="createTestModal">
+                  <i className="material-icons left">add</i>
+                  Add Tests
+                </button>
+              </span>
+              <span style={{ marginLeft: "20px" }}>
+                <button className="btn waves-effect waves-light green">
+                  <i className="material-icons left">visibility</i>
+                  View Deleted Tests
+                </button>
+              </span>
             </div>
             {/* -------------------- Test Creation Modal -------------------- */}
             <div id="createTestModal" className="modal">
