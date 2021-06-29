@@ -156,22 +156,24 @@ class admin extends Component {
         {this.state.isAdmin ? (
           <React.Fragment>
             <div className="container" style={{ marginTop: "10vh" }}>
-              <span>
-                <button className="btn-medium waves-effect waves-light blue btn modal-trigger" data-target="createTestModal">
-                  <i className="material-icons left">add</i>
-                  Add Tests
-                </button>
-              </span>
-              <span style={{ marginLeft: "20px" }}>
-                <button
-                  className="btn waves-effect waves-light green modal-trigger"
-                  data-target="ArchivedTestListModal"
-                  onClick={this.fetchArchivedTests}
-                >
-                  <i className="material-icons left">visibility</i>
-                  View Deleted Tests
-                </button>
-              </span>
+              <div className="row">
+                <div className="col s12 m6" style={{ marginTop: "10px" }}>
+                  <button className="btn-medium waves-effect waves-light blue btn modal-trigger" data-target="createTestModal">
+                    <i className="material-icons left">add</i>
+                    Add Tests
+                  </button>
+                </div>
+                <div className="col s12 m6" style={{ marginTop: "10px" }}>
+                  <button
+                    className="btn waves-effect waves-light green modal-trigger"
+                    data-target="ArchivedTestListModal"
+                    onClick={this.fetchArchivedTests}
+                  >
+                    <i className="material-icons left">visibility</i>
+                    View Deleted Tests
+                  </button>
+                </div>
+              </div>
             </div>
             {/* -------------------- Test Creation Modal -------------------- */}
             <div id="createTestModal" className="modal">
