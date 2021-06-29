@@ -1,15 +1,25 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 
-import { authAdmin, fetchAllAdminTests, createTest, deleteTest } from "../../api/auth";
+import { authAdmin, fetchAllAdminTests, createTest, deleteTest, fetchArchivedTests, restoreTest, publishTest } from "../../api/auth";
 
 import M from "materialize-css";
 
 class admin extends Component {
-  Modalinstance;
+  CreateTestModalInstance;
+  ArchivedTestsModalInstance;
   constructor(props) {
     super(props);
-    this.state = { isAdmin: false, message: "Loading", tests: [], name: "", time_limit: undefined };
+    this.state = {
+      isAdmin: false,
+      message: "Loading",
+      tests: [],
+      name: "",
+      time_limit: undefined,
+      loadingArchivedTests: true,
+      archivedTests: [],
+      loadingTests: true,
+    };
   }
 
   componentDidMount() {
@@ -26,7 +36,9 @@ class admin extends Component {
       if (resp.data.status === 200) {
         await this.setState({ isAdmin: true });
         let elems = document.querySelectorAll(".modal");
-        this.Modalinstance = M.Modal.init(elems, {})[0];
+        let instances = M.Modal.init(elems, {});
+        this.CreateTestModalInstance = instances[0];
+        this.ArchivedTestsModalInstance = instances[1];
         this.fetchTests();
       } else this.setState({ message: "You are not authorised to view this page" });
     } catch (error) {
@@ -38,11 +50,30 @@ class admin extends Component {
     try {
       let resp = await fetchAllAdminTests();
       if (resp.data.status === 200) await this.setState({ tests: resp.data.tests });
+      this.setState({ loadingTests: false });
     } catch (error) {
       console.log(error);
+      this.setState({ loadingTests: false });
       alert("Error fetching tests");
     }
   }
+
+  publishTest = async (testId, index) => {
+    try {
+      await this.setState({ loadingTests: true });
+      let res = await publishTest({ testId });
+      let resp = res.data;
+      if (resp.status === 200) {
+        let tests = this.state.tests;
+        tests[index] = resp.test;
+        await this.setState({ tests });
+      }
+      this.setState({ loadingTests: false });
+    } catch (error) {
+      this.setState({ loadingTests: false });
+      console.log(error);
+    }
+  };
 
   createTest = async () => {
     this.setState({ creatingTest: true });
@@ -56,7 +87,7 @@ class admin extends Component {
       let resp = await createTest(data);
       if (resp.data.status === 200) {
         this.setState({ tests: [...this.state.tests, resp.data.test] });
-        this.Modalinstance.close();
+        this.CreateTestModalInstance.close();
       }
     } catch (error) {
       console.log(error);
@@ -83,6 +114,42 @@ class admin extends Component {
     this.props.history.push("/admin/test_edit");
   };
 
+  fetchArchivedTests = async () => {
+    try {
+      let res = await fetchArchivedTests();
+      let resp = res.data;
+      if (resp.status === 200) {
+        await this.setState({ archivedTests: resp.tests });
+      }
+      this.setState({ loadingArchivedTests: false });
+    } catch (error) {
+      console.log(error);
+      this.setState({ loadingArchivedTests: false });
+    }
+  };
+
+  getDate = (mdate) => {
+    let fdate = mdate.split("T")[0];
+    let [year, month, date] = fdate.split("-");
+    return `${date} / ${month} / ${year}`;
+  };
+
+  restoreTest = async (testId) => {
+    try {
+      await this.setState({ loadingArchivedTests: true });
+      let res = await restoreTest({ testId });
+      let resp = res.data;
+      if (resp.status === 200) {
+        await this.setState({ tests: resp.tests });
+        await this.fetchArchivedTests();
+      }
+      await this.setState({ loadingArchivedTests: false });
+    } catch (error) {
+      console.log(error);
+      await this.setState({ loadingArchivedTests: false });
+    }
+  };
+
   render() {
     return (
       <React.Fragment>
@@ -96,7 +163,11 @@ class admin extends Component {
                 </button>
               </span>
               <span style={{ marginLeft: "20px" }}>
-                <button className="btn waves-effect waves-light green">
+                <button
+                  className="btn waves-effect waves-light green modal-trigger"
+                  data-target="ArchivedTestListModal"
+                  onClick={this.fetchArchivedTests}
+                >
                   <i className="material-icons left">visibility</i>
                   View Deleted Tests
                 </button>
@@ -154,7 +225,7 @@ class admin extends Component {
                       className="btn red text-white"
                       onClick={() => {
                         this.setState({ name: "", time_limit: undefined });
-                        this.Modalinstance.close();
+                        this.CreateTestModalInstance.close();
                       }}
                     >
                       Close
@@ -165,43 +236,125 @@ class admin extends Component {
             </div>
             {/* -------------------------------------------------------------- */}
 
+            {/* ------------------------ARCHIVED TEST VIEW MODEL------------------------------- */}
+
+            <div id="ArchivedTestListModal" className="modal">
+              <div className="modal-content">
+                {this.state.loadingArchivedTests ? (
+                  <div className="flex_center">Fetching tests...</div>
+                ) : (
+                  <React.Fragment>
+                    {this.state.archivedTests.length > 0 ? (
+                      <table className="highlight">
+                        <thead>
+                          <tr>
+                            <th>Test Name</th>
+                            <th>Time Limit</th>
+                            <th>Date</th>
+                            <th>Restore test</th>
+                          </tr>
+                        </thead>
+
+                        <tbody>
+                          {this.state.archivedTests.map((test, index) => (
+                            <React.Fragment key={index}>
+                              {/* <tr style={{ cursor: "pointer" }} onClick={() => this.props.history.push(`/result/${test._id}`)}> */}
+                              <tr>
+                                <td style={{ textTransform: "capitalize" }}>{test.name}</td>
+                                <td>{test.time_limit > 0 ? test.time_limit : "No Limit"}</td>
+                                <td>{this.getDate(test.createdAt)}</td>
+                                <td>
+                                  <button className="btn green" onClick={() => this.restoreTest(test._id)}>
+                                    Restore
+                                  </button>
+                                </td>
+                              </tr>
+                            </React.Fragment>
+                          ))}
+                        </tbody>
+                      </table>
+                    ) : (
+                      <div className="flex_center">No Archived Tests</div>
+                    )}
+                  </React.Fragment>
+                )}
+                <br />
+                <br />
+                <div className="modal-footer">
+                  <button
+                    className="btn red text-white"
+                    onClick={() => {
+                      this.ArchivedTestsModalInstance.close();
+                    }}
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* ------------------------------------------------------------------------------- */}
+
             <hr />
             <br />
             <br />
             <React.Fragment>
               <div className="container">
                 <div className="row">
-                  {this.state.tests.length > 0 ? (
-                    this.state.tests.map((test, key) => {
-                      return (
-                        <div className="col s12 m4" key={key}>
-                          <div className="card purple darken-3">
-                            <div className="card-content white-text">
-                              <span className="card-title">{test.name}</span>
-                              <p>Number of questions : {test.questions.length}</p>
-                              <p>Time Limit: {test.time_limit === -1 ? "No limit" : `${test.time_limit} minutes`}</p>
-                              <div className="right-align">
-                                <button
-                                  className="btn-floating btn-medium waves-effect waves-light blue"
-                                  onClick={() => this.editTest(test)}
-                                >
-                                  <i className="material-icons">create</i>
-                                </button>
-                                &nbsp;&nbsp;&nbsp;
-                                <button
-                                  className="btn-floating btn-medium waves-effect waves-light red"
-                                  onClick={() => this.deleteTest(test)}
-                                >
-                                  <i className="material-icons">delete_forever</i>
-                                </button>
+                  {this.state.loadingTests ? (
+                    <div className="flex_center">Loading...</div>
+                  ) : (
+                    <React.Fragment>
+                      {this.state.tests.length > 0 ? (
+                        this.state.tests.map((test, key) => {
+                          return (
+                            <div className="col s12 m4" key={key}>
+                              <div className="card purple darken-3">
+                                {test.status === "NEW" ? (
+                                  <button
+                                    className="btn indigo"
+                                    onClick={() => {
+                                      if (window.confirm(`Are you sure you want to publish the test: ${test.name} ?`)) {
+                                        this.publishTest(test._id, key);
+                                      }
+                                    }}
+                                  >
+                                    Publish Test
+                                  </button>
+                                ) : (
+                                  <button className="btn indigo disabled" disabled={true}>
+                                    <i className="material-icons left">done_all</i>
+                                    Published
+                                  </button>
+                                )}
+                                <div className="card-content white-text">
+                                  <span className="card-title">{test.name}</span>
+                                  <p>Number of questions : {test.questions.length}</p>
+                                  <p>Time Limit: {test.time_limit === -1 ? "No limit" : `${test.time_limit} minutes`}</p>
+                                  <div className="right-align">
+                                    <button
+                                      className="btn-floating btn-medium waves-effect waves-light blue"
+                                      onClick={() => this.editTest(test)}
+                                    >
+                                      <i className="material-icons">create</i>
+                                    </button>
+                                    &nbsp;&nbsp;&nbsp;
+                                    <button
+                                      className="btn-floating btn-medium waves-effect waves-light red"
+                                      onClick={() => this.deleteTest(test)}
+                                    >
+                                      <i className="material-icons">delete_forever</i>
+                                    </button>
+                                  </div>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </div>
-                      );
-                    })
-                  ) : (
-                    <div className="center"> "You have not created any tests! click the add button to create a test"</div>
+                          );
+                        })
+                      ) : (
+                        <div className="center"> "You have not created any tests! click the add button to create a test"</div>
+                      )}
+                    </React.Fragment>
                   )}
                 </div>
               </div>
