@@ -30,7 +30,7 @@ class admin_login extends Component {
       }
     } catch (error) {
       this.setState({ logginIn: false });
-      console.log(error);
+      alert(error.response.data.message);
     }
   };
 

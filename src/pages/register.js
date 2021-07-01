@@ -43,6 +43,7 @@ class Register extends Component {
     } catch (error) {
       this.setState({ debounce: false });
       console.log(error);
+      alert(error.response.data.message);
     }
   };
 

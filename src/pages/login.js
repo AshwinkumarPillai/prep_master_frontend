@@ -48,6 +48,7 @@ class Login extends Component {
     } catch (error) {
       this.setState({ logginIn: false });
       console.log(error);
+      alert(error.response.data.message);
     }
   };
   render() {
