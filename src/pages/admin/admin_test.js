@@ -31,13 +31,17 @@ class admin_test extends Component {
       let resp = res.data;
       if (resp.status === 200) {
         this.setState({ test: resp.test });
-        let elems = document.querySelectorAll(".modal");
-        let instances = M.Modal.init(elems, {});
-        this.searchQuestionModalInstance = instances[0];
+        this.setSearchQuestionModalInstance();
       }
     } catch (error) {
       alert("Internal Server Error");
     }
+  }
+
+  setSearchQuestionModalInstance() {
+    let elems = document.querySelectorAll(".modal");
+    let instances = M.Modal.init(elems, {});
+    this.searchQuestionModalInstance = instances[0];
   }
 
   componentWillUnmount() {
@@ -77,11 +81,12 @@ class admin_test extends Component {
       let res = await updateTest({ ...test, testId: test._id });
       let resp = res.data;
       if (resp.status === 200) {
-        this.setState({ test: resp.test });
-      } else this.setState({ test: checkpoint });
+        await this.setState({ test: resp.test });
+      } else await this.setState({ test: checkpoint });
     } catch (error) {
-      this.setState({ test: checkpoint });
+      await this.setState({ test: checkpoint });
     }
+    this.setSearchQuestionModalInstance();
   };
 
   searchQuestion = async (e) => {
