@@ -34,7 +34,7 @@ class Result extends Component {
       alert("Error! Please try again");
       this.props.history.push("/");
     } catch (error) {
-      alert("Error! Please try again");
+      alert(error.response.data.message);
       this.props.history.push("/");
     }
   }

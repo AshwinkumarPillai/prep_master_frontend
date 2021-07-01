@@ -46,7 +46,7 @@ class Test extends Component {
       alert("Error! Please try again");
       this.props.history.push("/");
     } catch (error) {
-      alert("The requested resource does not exist.");
+      alert(error.response.data.message);
       this.props.history.push("/");
     }
   }
@@ -90,7 +90,7 @@ class Test extends Component {
     } catch (error) {
       console.log(error);
       this.setState({ loadedTest: true });
-      alert("Error Submitting Test!");
+      alert(error.response.data.message);
     }
   };
 

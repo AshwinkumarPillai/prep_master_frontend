@@ -54,7 +54,7 @@ class admin extends Component {
     } catch (error) {
       console.log(error);
       this.setState({ loadingTests: false });
-      alert("Error fetching tests");
+      alert(error.response.data.message);
     }
   }
 
@@ -71,6 +71,7 @@ class admin extends Component {
       this.setState({ loadingTests: false });
     } catch (error) {
       this.setState({ loadingTests: false });
+      alert(error.response.data.message);
       console.log(error);
     }
   };
@@ -91,6 +92,7 @@ class admin extends Component {
       }
     } catch (error) {
       console.log(error);
+      alert(error.response.data.message);
     }
     this.setState({ creatingTest: false, name: "", time_limit: undefined });
   };
@@ -124,6 +126,7 @@ class admin extends Component {
       this.setState({ loadingArchivedTests: false });
     } catch (error) {
       console.log(error);
+      alert(error.response.data.message);
       this.setState({ loadingArchivedTests: false });
     }
   };
@@ -146,6 +149,7 @@ class admin extends Component {
       await this.setState({ loadingArchivedTests: false });
     } catch (error) {
       console.log(error);
+      alert(error.response.data.message);
       await this.setState({ loadingArchivedTests: false });
     }
   };

@@ -96,6 +96,7 @@ class QuestionAdd extends Component {
       this.setState({ savingQuestion: false });
     } catch (error) {
       console.log(error);
+      alert(error.response.data.message);
       this.setState({ savingQuestion: false });
     }
   };

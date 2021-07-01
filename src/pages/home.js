@@ -20,6 +20,7 @@ class Home extends Component {
       if (resp.data.status === 200) await this.setState({ tests: resp.data.tests });
       this.setState({ testsLoaded: true });
     } catch (error) {
+      alert(error.response.data.message);
       this.setState({ testsLoaded: true });
     }
   }

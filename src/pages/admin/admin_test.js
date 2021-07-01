@@ -34,6 +34,7 @@ class admin_test extends Component {
         this.setSearchQuestionModalInstance();
       }
     } catch (error) {
+      alert(error.response.data.message);
       alert("Internal Server Error");
     }
   }
@@ -84,6 +85,7 @@ class admin_test extends Component {
         await this.setState({ test: resp.test });
       } else await this.setState({ test: checkpoint });
     } catch (error) {
+      alert(error.response.data.message);
       await this.setState({ test: checkpoint });
     }
     this.setSearchQuestionModalInstance();
